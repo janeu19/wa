@@ -4,7 +4,7 @@ app = Flask(__name__, static_url_path='/static', static_folder='static', templat
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('main.html'), 200
+    return render_template('prvni_stranka.html'), 200
 
 @app.route('/registrace', methods=['GET', 'POST'])
 def registrace():
@@ -12,7 +12,7 @@ def registrace():
         # Zde můžete zpracovat data z formuláře, pokud budete chtít.
 
         # Přesměrování zpět na úvodní stránku po odeslání formuláře
-        return render_template('main.html'), 200
+        return render_template('prvni_stranka.html'), 200
     return render_template('registrace.html'), 200
 
 if __name__ == '__main__':
