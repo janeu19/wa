@@ -1,17 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Rozsazení v lodích na vodáckém kurzu</title>
+    <title>Registrace na vodácký kurz</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='mujstyl.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
-    <h1>Rozsazení v lodích na vodáckém kurzu 2023 SPŠE Ječná</h1>
-    <a href="/registrace">Registrovat se</a>
-    <h2>Seznam registrovaných osob</h2>
-    {% for user in users %}
-        <h3>{{ user.nick }}</h3>
-        <p>Plavec: {{ 'Ano' if user.je_plavec == '1' else 'Ne' }}</p>
-        <p>Kanoe kamarád: {{ user.kanoe_kamarad }}</p>
-    {% endfor %}
+    <form id="registrationForm" method="post">
+        <label for="nick">Přezdívka:</label>
+        <input type="text" id="nick" name="nick"><br>
+        <label for="je_plavec">Umí plavat:</label>
+        <select id="je_plavec" name="je_plavec">
+            <option value="1">Ano</option>
+            <option value="0">Ne</option>
+        </select><br>
+        <label for="kanoe_kamarad">Kanoe kamarád:</label>
+        <input type="text" id="kanoe_kamarad" name="kanoe_kamarad"><br>
+        <input type="submit" value="Registrovat">
+        <a href="/">Storno a návrat</a>
+    </form>
+
+    <script type="text/javascript">
+    $("#registrationForm").submit(function(e){
+        var nick = $("#nick").val();
+        var je_plavec = $("#je_plavec").val();
+        var kanoe_kamarad = $("#kanoe_kamarad").val();
+
+        if(je_plavec != '1' || nick.length < 2 || nick.length > 20 || 
+          (kanoe_kamarad && (kanoe_kamarad.length < 2 || kanoe_kamarad.length > 20))) {
+            alert("Neplatná data ve formuláři");
+            return false;
+        }
+
+        var nicknameExists = false;
+        $.ajax({
+            url: '/api/check-nickname?nick=' + nick,
+            type: 'GET',
+            async: false,
+            success: function(data) {
+                nicknameExists = data.exists;
+            }
+        });
+
+        if (nicknameExists) {
+            alert("Nickname již existuje");
+            return false;
+        }
+
+        return true;
+    });
+    </script>
 </body>
 </html>
